@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PartyLooper.Views.MainPage"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:converters="clr-namespace:Xamarin.CommunityToolkit.Converters;assembly=Xamarin.CommunityToolkit"
+             BackgroundColor="Azure"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Accent">#96d1ff</Color>
+        </ResourceDictionary>
+        <converters:BoolToObjectConverter
+                x:Key="PartyModeButtonColor"
+                FalseObject="Blue"
+                TrueObject="Green" />
+    </ContentPage.Resources>
+
+    <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
+        <StackLayout>
+            <Button x:Name="btnOpenMedia" VerticalOptions="Center" Text="Open media" Command="{Binding LoginCommand}"/>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
+            <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
+                HorizontalOptions="FillAndExpand"
+                ThumbColor="HotPink"
+                MinimumTrackColor="HotPink"
+                MaximumTrackColor="Black"/>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="HotPink"/>
+            <xct:RangeSlider
+                HorizontalOptions="FillAndExpand"
+                x:Name="sliderRangeControl"
+                MaximumValue="100"
+                MinimumValue="0"
+                StepValue="1"
+                LowerThumbRadius="5"
+                UpperThumbRadius="5"
+                LowerThumbSize="20"
+                UpperThumbSize="20"
+                LowerValue="0"
+                UpperValue="100">
+
+                <xct:RangeSlider.LowerThumbView>
+                    <Label Text="L" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                </xct:RangeSlider.LowerThumbView>
+                <xct:RangeSlider.UpperThumbView>
+                    <Label Text="R" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                </xct:RangeSlider.UpperThumbView>
+            </xct:RangeSlider>
+            <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="HotPink"/>
+        </StackLayout>
+        
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="0,20,0,0">
+            <Button x:Name="btnPlay" Text="Play"/>
+            <Button x:Name="btnPause" Text="||"/>
+            <Button x:Name="btnStop" Text="Stop"/>
+        </StackLayout>
+
+        <StackLayout VerticalOptions="EndAndExpand">
+            <Label HorizontalOptions="Center" x:Name="lbStatus"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbPlayingTime"></Label>
+        </StackLayout>
+        <StackLayout Padding="10">
+            <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!"
+                    BackgroundColor="HotPink"/>
+            <!--<Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!"
+                    BackgroundColor="{Binding Path=PlayerState.IsPartyMode, Mode=TwoWay, Converter={StaticResource PartyModeButtonColor}}"/>-->
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>
