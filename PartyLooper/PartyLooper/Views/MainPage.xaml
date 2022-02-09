@@ -52,13 +52,19 @@
             </xct:RangeSlider>
             <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="HotPink"/>
         </StackLayout>
-        
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="0,20,0,0">
-            <Button x:Name="btnPlay" Text="Play"/>
-            <Button x:Name="btnPause" Text="||"/>
-            <Button x:Name="btnStop" Text="Stop"/>
-        </StackLayout>
 
+        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+            <Button 
+                IsEnabled="False"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                x:Name="btnPlayPause" 
+                Text="Play"
+                HeightRequest="80"
+                BorderWidth="4"
+                CornerRadius="30"
+                BorderColor="LightBlue"/>
+        </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
             <Label HorizontalOptions="Center" x:Name="lbStatus"></Label>
             <Label HorizontalOptions="Center" x:Name="lbPlayingTime"></Label>

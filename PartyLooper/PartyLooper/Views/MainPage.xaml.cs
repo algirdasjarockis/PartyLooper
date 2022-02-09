@@ -21,9 +21,7 @@ namespace PartyLooper.Views
             BindingContext = App.MainViewModel;        
 
             btnOpenMedia.Clicked += OpenMediaDialog;
-            btnPlay.Clicked += (s, e) => PlayCurrentFile();
-            btnPause.Clicked += (s, e) => PausePlaying();
-            btnStop.Clicked += (s, e) => StopPlaying();
+            btnPlayPause.Clicked += (s, e) => PausePlaying();
             btnParty.Clicked += (s, e) =>
             {
                 isPartyMode = !isPartyMode;
@@ -39,17 +37,19 @@ namespace PartyLooper.Views
 
             //sliderSongControl.LowerDragCompleted += (s, e) => SeekMedia(sliderSongControl.LowerValue);
 
-            CrossMediaManager.Current.StateChanged += (s, e) =>
+            mediaPlayer.StateChanged += (s, e) =>
             {
+                System.Console.WriteLine("player state changed");
                 if (e.State == MediaManager.Player.MediaPlayerState.Playing)
                 {
                     sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
                     sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalSeconds;
-                    btnPause.Text = "||";
+                    btnPlayPause.Text = "Pause";
+                    this.RunUiUpdateTimer();
                 }
                 else
                 {
-                    btnPause.Text = ">";
+                    btnPlayPause.Text = "Play";
                 }
             };
         }
@@ -86,6 +86,9 @@ namespace PartyLooper.Views
                     {
                         this.selectedFilePath = result.FullPath;
                         lbStatus.Text = result.FullPath;
+
+                        btnPlayPause.IsEnabled = true;
+                        await mediaPlayer.Play(this.selectedFilePath);
                     }
                  }
 
@@ -99,61 +102,48 @@ namespace PartyLooper.Views
             return null;
         }
 
-        async void PlayCurrentFile()
+        void RunUiUpdateTimer()
         {
-            if (this.selectedFilePath != null)
+            Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
             {
-                await mediaPlayer.Play(this.selectedFilePath);
-
-                Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+                if (isSliderDragging)
                 {
-                    if (isSliderDragging)
-                    {
-                        return true;
-                    }
-
-                    if (!mediaPlayer.IsPlaying())
-                    {
-                        return false;
-                    }
-
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        if (isPartyMode)
-                        {
-                            var pos = mediaPlayer.Position.TotalSeconds;
-                            if (pos >= sliderRangeControl.UpperValue || pos < sliderRangeControl.LowerValue)
-                            {
-                                SeekMedia(sliderRangeControl.LowerValue);
-                            }
-                        }
-
-                        var t = mediaPlayer.Duration - mediaPlayer.Position;
-
-                        var timeLeft = string.Format(
-                            "{0:D2}:{1:D2}:{2:D3}",
-                            t.Minutes,
-                            t.Seconds,
-                            t.Milliseconds
-                        );
-
-                        lbStatus.Text = timeLeft;
-                        lbPlayingTime.Text = mediaPlayer.Position.TotalSeconds.ToString();
-
-                        sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
-                    });
-
                     return true;
-                });
-            }
-        }
+                }
 
-        async void StopPlaying()
-        {
-            if (CrossMediaManager.Current.IsPlaying())
-            {
-                await CrossMediaManager.Current.Stop();
-            }
+                if (!mediaPlayer.IsPlaying())
+                {
+                    return false;
+                }
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    if (isPartyMode)
+                    {
+                        var pos = mediaPlayer.Position.TotalSeconds;
+                        if (pos >= sliderRangeControl.UpperValue || pos < sliderRangeControl.LowerValue)
+                        {
+                            SeekMedia(sliderRangeControl.LowerValue);
+                        }
+                    }
+
+                    var t = mediaPlayer.Duration - mediaPlayer.Position;
+
+                    var timeLeft = string.Format(
+                        "{0:D2}:{1:D2}:{2:D3}",
+                        t.Minutes,
+                        t.Seconds,
+                        t.Milliseconds
+                    );
+
+                    lbStatus.Text = timeLeft;
+                    lbPlayingTime.Text = mediaPlayer.Position.TotalSeconds.ToString();
+
+                    sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
+                });
+
+                return true;
+            });
         }
 
         async void PausePlaying()
