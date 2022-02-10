@@ -35,11 +35,8 @@ namespace PartyLooper.Views
             sliderSongControl.DragStarted += (s, e) => isSliderDragging = true;
             sliderSongControl.DragCompleted += (s, e) => isSliderDragging = false;
 
-            //sliderSongControl.LowerDragCompleted += (s, e) => SeekMedia(sliderSongControl.LowerValue);
-
             mediaPlayer.StateChanged += (s, e) =>
             {
-                System.Console.WriteLine("player state changed");
                 if (e.State == MediaManager.Player.MediaPlayerState.Playing)
                 {
                     sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
@@ -59,7 +56,7 @@ namespace PartyLooper.Views
             await this.PickAndShow();
         }
 
-        async Task<FileResult> PickAndShow()
+        private async Task<FileResult> PickAndShow()
         {
             var customFileType =
                 new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -79,9 +76,6 @@ namespace PartyLooper.Views
                 var result = await FilePicker.PickAsync(options);
                 if (result != null)
                 {
-                    //var stream = await result.OpenReadAsync();
-                    //Image = ImageSource.FromStream(() => stream);
-
                     if (result.FileName.EndsWith(".mp3"))
                     {
                         this.selectedFilePath = result.FullPath;

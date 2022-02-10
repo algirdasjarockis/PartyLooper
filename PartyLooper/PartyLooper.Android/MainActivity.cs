@@ -2,6 +2,7 @@
 
 using Android.App;
 using Android.Content.PM;
+using Android.Content;
 using Android.Runtime;
 using Android.OS;
 using MediaManager;
@@ -12,6 +13,7 @@ namespace PartyLooper.Droid
         Label = "PartyLooper", 
         Icon = "@mipmap/icon", 
         Theme = "@style/MainTheme", 
+        LaunchMode = LaunchMode.SingleTask,
         MainLauncher = true, 
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize,
         ScreenOrientation = ScreenOrientation.Portrait

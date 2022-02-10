@@ -3,19 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.MainPage"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             xmlns:converters="clr-namespace:Xamarin.CommunityToolkit.Converters;assembly=Xamarin.CommunityToolkit"
              BackgroundColor="Azure"
              Title="{Binding Title}">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Color x:Key="Accent">#96d1ff</Color>
-        </ResourceDictionary>
-        <converters:BoolToObjectConverter
-                x:Key="PartyModeButtonColor"
-                FalseObject="Blue"
-                TrueObject="Green" />
-    </ContentPage.Resources>
 
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
         <StackLayout>
@@ -41,7 +30,7 @@
                 LowerThumbSize="20"
                 UpperThumbSize="20"
                 LowerValue="0"
-                UpperValue="100">
+                UpperValue="1000">
 
                 <xct:RangeSlider.LowerThumbView>
                     <Label Text="L" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
@@ -72,9 +61,6 @@
         <StackLayout Padding="10">
             <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!"
                     BackgroundColor="HotPink"/>
-            <!--<Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!"
-                    BackgroundColor="{Binding Path=PlayerState.IsPartyMode, Mode=TwoWay, Converter={StaticResource PartyModeButtonColor}}"/>-->
         </StackLayout>
     </StackLayout>
-
 </ContentPage>
