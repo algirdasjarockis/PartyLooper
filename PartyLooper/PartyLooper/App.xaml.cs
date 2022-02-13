@@ -10,12 +10,15 @@ namespace PartyLooper
     public partial class App : Application
     {
         public static MainViewModel MainViewModel { get; private set; }
+        public static PlaylistViewModel PlaylistViewModel { get; private set; }
         public App()
         {
             InitializeComponent();
             MainViewModel = new MainViewModel();
+            PlaylistViewModel = new PlaylistViewModel();
 
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<PlaylistStore>();
             MainPage = new AppShell();
         }
 

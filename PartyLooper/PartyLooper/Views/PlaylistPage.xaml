@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PartyLooper.Views.PlaylistPage"
+             Title="Playlist">
+    <ContentPage.Content>
+        <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+            <CollectionView
+            x:Name="viewPlaylistItems"
+            ItemsSource="{Binding PlaylistItems}"
+            SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete"
+                                           BackgroundColor="Red"
+                                           />
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <Grid Padding="6"
+                            BackgroundColor="Azure"
+                            RowDefinitions="Auto, *"
+                            ColumnDefinitions="Auto, *">
+                                <Label Text=" " 
+                                Grid.RowSpan="2"
+                                FontAttributes="Bold"
+                                BackgroundColor="red"
+                                />
+                                <Label Text="{Binding SongName}"
+                                FontAttributes="Bold"
+                                FontSize="17"
+                                Grid.Column="1"
+                                />
+                                <Label Text="{Binding FilePath}"
+                                FontAttributes="Italic"
+                                FontSize="12"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                />
+                            </Grid>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.GestureRecognizers>
+                    <TapGestureRecognizer
+                    NumberOfTapsRequired="1"
+                    >
+
+                    </TapGestureRecognizer>
+                </CollectionView.GestureRecognizers>
+            </CollectionView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>

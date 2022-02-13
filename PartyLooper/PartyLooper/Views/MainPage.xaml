@@ -7,8 +7,13 @@
              Title="{Binding Title}">
 
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
-        <StackLayout>
-            <Button x:Name="btnOpenMedia" VerticalOptions="Center" Text="Open media" Command="{Binding LoginCommand}"/>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+            <Button x:Name="btnOpenMedia" Text="Open media"/>
+            <Button x:Name="btnAddToPlaylist" Text="+" WidthRequest="50" IsEnabled="False"/>
+        </StackLayout>
+        <StackLayout HeightRequest="20">
+            <Label x:Name="lbPlaylistMsg" Text="Current song added to the playlist" 
+                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
             <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"

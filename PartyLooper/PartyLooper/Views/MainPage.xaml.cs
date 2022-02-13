@@ -1,12 +1,16 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using MediaManager;
+using PartyLooper.Services;
+using PartyLooper.Models;
 
 namespace PartyLooper.Views
 {
+    [QueryProperty(nameof(FilenameFromPlaylist), "filePath")]
     public partial class MainPage : ContentPage
     {
         string selectedFilePath;
@@ -14,13 +18,23 @@ namespace PartyLooper.Views
         bool isSliderDragging = false;
         bool isPartyMode = false;
         IMediaManager mediaPlayer = CrossMediaManager.Current;
+        public IPlaylistStore<PlaylistItem> playlistStore => DependencyService.Get<IPlaylistStore<PlaylistItem>>();
+
+        public string FilenameFromPlaylist
+        {
+            set
+            {
+                this.PlayFile(value);
+            }
+        }
 
         public MainPage()
         {
             InitializeComponent();
             BindingContext = App.MainViewModel;        
 
-            btnOpenMedia.Clicked += OpenMediaDialog;
+            btnOpenMedia.Clicked += this.OpenMediaDialog;
+            btnAddToPlaylist.Clicked += this.AddCurrentSongToPlaylist;
             btnPlayPause.Clicked += (s, e) => PausePlaying();
             btnParty.Clicked += (s, e) =>
             {
@@ -56,6 +70,40 @@ namespace PartyLooper.Views
             await this.PickAndShow();
         }
 
+        private async void AddCurrentSongToPlaylist(object sender, EventArgs e)
+        {
+            if (App.PlaylistViewModel.Exists(this.selectedFilePath))
+            {
+                // file path already exists, nothing to do here
+                return;
+            }
+
+            await this.addAndSavePlaylistItems();
+
+            // update view
+            lbPlaylistMsg.IsVisible = true;
+            Device.StartTimer(TimeSpan.FromSeconds(5), () =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    lbPlaylistMsg.IsVisible = false;
+                });
+
+                return false;
+            });
+        }
+
+        private async Task addAndSavePlaylistItems()
+        {
+            App.PlaylistViewModel.PlaylistItems.Add(new Models.PlaylistItem()
+            {
+                SongName = Path.GetFileNameWithoutExtension(this.selectedFilePath),
+                FilePath = this.selectedFilePath
+            });
+
+            await this.playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
+        }
+
         private async Task<FileResult> PickAndShow()
         {
             var customFileType =
@@ -78,11 +126,7 @@ namespace PartyLooper.Views
                 {
                     if (result.FileName.EndsWith(".mp3"))
                     {
-                        this.selectedFilePath = result.FullPath;
-                        lbStatus.Text = result.FullPath;
-
-                        btnPlayPause.IsEnabled = true;
-                        await mediaPlayer.Play(this.selectedFilePath);
+                        this.PlayFile(result.FullPath);
                     }
                  }
 
@@ -94,6 +138,15 @@ namespace PartyLooper.Views
             }
 
             return null;
+        }
+
+        async void PlayFile(string filePath)
+        {
+            this.selectedFilePath = filePath;
+            lbStatus.Text = filePath;
+
+            btnPlayPause.IsEnabled = btnAddToPlaylist.IsEnabled = true;
+            await mediaPlayer.Play(this.selectedFilePath);
         }
 
         void RunUiUpdateTimer()
