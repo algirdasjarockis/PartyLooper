@@ -4,23 +4,6 @@
              x:Class="PartyLooper.Views.PlaylistPage"
              xmlns:local="clr-namespace:PartyLooper.ViewModels"
              Title="Playlist">
-    <ContentPage.Resources>
-        <Style TargetType="Grid">
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Tapped" />
-                        <VisualState x:Name="Focused">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor"
-                                        Value="Green" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
-    </ContentPage.Resources>
     <ContentPage.Content>
         <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
             <CollectionView
@@ -34,20 +17,20 @@
                                 <SwipeItems>
                                     <SwipeItem 
                                         Text="Delete"
-                                        BackgroundColor="Red"
+                                        BackgroundColor="{StaticResource Accent}"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type local:PlaylistViewModel}}, Path=RemoveItemCommand}"		
                                             CommandParameter="{Binding}"
                                         />
                                 </SwipeItems>
                             </SwipeView.LeftItems>
                             <Grid Padding="6"
-                                BackgroundColor="Azure"
+                                BackgroundColor="White"
                                 RowDefinitions="Auto, *"
                                 ColumnDefinitions="Auto, *">
                                 <Label Text=" " 
                                     Grid.RowSpan="2"
                                     FontAttributes="Bold"
-                                    BackgroundColor="red"
+                                    BackgroundColor="{StaticResource Accent}"
                                 />
                                 <Label Text="{Binding SongName}"
                                     FontAttributes="Bold"

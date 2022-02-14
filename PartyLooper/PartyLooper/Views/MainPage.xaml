@@ -3,9 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.MainPage"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             BackgroundColor="Azure"
+             BackgroundColor="{StaticResource Background}"
              Title="{Binding Title}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ThumbLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource SecondaryAccent}"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Background>
+        <LinearGradientBrush>
+            <GradientStop Color="#333"
+                          Offset="0.05" />
+            <GradientStop Color="#333"
+                          Offset="0.4" />
+            <GradientStop Color="Black"
+                          Offset="0.75" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+    
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
             <Button x:Name="btnOpenMedia" Text="Open media"/>
@@ -18,12 +37,12 @@
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
             <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
                 HorizontalOptions="FillAndExpand"
-                ThumbColor="HotPink"
-                MinimumTrackColor="HotPink"
-                MaximumTrackColor="Black"/>
+                ThumbColor="{StaticResource Accent}"
+                MinimumTrackColor="{StaticResource Accent}"
+                MaximumTrackColor="White"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal">
-            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="HotPink"/>
+            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="{StaticResource Accent}"/>
             <xct:RangeSlider
                 HorizontalOptions="FillAndExpand"
                 x:Name="sliderRangeControl"
@@ -35,16 +54,22 @@
                 LowerThumbSize="20"
                 UpperThumbSize="20"
                 LowerValue="0"
-                UpperValue="1000">
-
+                UpperValue="1000"
+                LowerValueLabelStyle="{StaticResource ThumbLabelStyle}"
+                LowerThumbColor="{StaticResource SecondaryAccent}" LowerThumbBorderColor="{StaticResource SecondaryAccent}"
+                UpperValueLabelStyle="{StaticResource ThumbLabelStyle}"
+                UpperThumbColor="{StaticResource SecondaryAccent}" UpperThumbBorderColor="{StaticResource SecondaryAccent}"
+                TrackHighlightColor="{StaticResource SecondaryAccent}" TrackHighlightBorderColor="{StaticResource SecondaryAccent}"
+                TrackColor="#555"
+            >
                 <xct:RangeSlider.LowerThumbView>
-                    <Label Text="L" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                    <Label Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                 </xct:RangeSlider.LowerThumbView>
                 <xct:RangeSlider.UpperThumbView>
-                    <Label Text="R" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                    <Label Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                 </xct:RangeSlider.UpperThumbView>
             </xct:RangeSlider>
-            <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="HotPink"/>
+            <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="{StaticResource Accent}"/>
         </StackLayout>
 
         <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
@@ -54,18 +79,19 @@
                 HorizontalOptions="Center"
                 x:Name="btnPlayPause" 
                 Text="Play"
+                TextColor="{StaticResource SecondaryAccent}"
+                FontAttributes="Bold"
                 HeightRequest="80"
                 BorderWidth="4"
                 CornerRadius="30"
-                BorderColor="LightBlue"/>
+                BorderColor="{StaticResource SecondaryAccent}"/>
         </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
-            <Label HorizontalOptions="Center" x:Name="lbStatus"></Label>
-            <Label HorizontalOptions="Center" x:Name="lbPlayingTime"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbStatus" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbPlayingTime" TextColor="{StaticResource Accent}" FontSize="18"></Label>
         </StackLayout>
         <StackLayout Padding="10">
-            <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!"
-                    BackgroundColor="HotPink"/>
+            <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!" BackgroundColor="{StaticResource Accent}"/>
         </StackLayout>
     </StackLayout>
 </ContentPage>

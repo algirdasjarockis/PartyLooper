@@ -140,7 +140,6 @@ namespace PartyLooper.Views
         async void PlayFile(string filePath)
         {
             this.selectedFilePath = filePath;
-            lbStatus.Text = filePath;
 
             btnPlayPause.IsEnabled = btnAddToPlaylist.IsEnabled = true;
             await mediaPlayer.Play(this.selectedFilePath);
