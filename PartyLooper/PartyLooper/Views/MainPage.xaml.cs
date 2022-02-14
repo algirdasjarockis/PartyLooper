@@ -95,7 +95,7 @@ namespace PartyLooper.Views
 
         private async Task addAndSavePlaylistItems()
         {
-            App.PlaylistViewModel.PlaylistItems.Add(new Models.PlaylistItem()
+            App.PlaylistViewModel.PlaylistItems.Add(new PlaylistItem()
             {
                 SongName = Path.GetFileNameWithoutExtension(this.selectedFilePath),
                 FilePath = this.selectedFilePath
@@ -122,13 +122,10 @@ namespace PartyLooper.Views
             try
             {
                 var result = await FilePicker.PickAsync(options);
-                if (result != null)
+                if (result != null && result.FileName.EndsWith(".mp3"))
                 {
-                    if (result.FileName.EndsWith(".mp3"))
-                    {
-                        this.PlayFile(result.FullPath);
-                    }
-                 }
+                    this.PlayFile(result.FullPath);
+                }
 
                 return result;
             }

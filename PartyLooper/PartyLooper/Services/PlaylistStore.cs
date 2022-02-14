@@ -26,7 +26,7 @@ namespace PartyLooper.Services
                 return items;
             }
 
-            StreamReader sr = new StreamReader(new FileStream(this.playlistFile, FileMode.Open, FileAccess.Read, FileShare.None));
+            StreamReader sr = new StreamReader(new FileStream(this.playlistFile, FileMode.Open, FileAccess.Read, FileShare.Read));
             string line;
 
             while ((line = await sr.ReadLineAsync()) != null)
@@ -45,7 +45,7 @@ namespace PartyLooper.Services
 
         public async Task PersistPlaylistAsync(IEnumerable<PlaylistItem> items)
         {
-            FileStream fs = new FileStream(this.playlistFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            FileStream fs = new FileStream(this.playlistFile, FileMode.Create, FileAccess.Write, FileShare.Read);
 
             StreamWriter writer = new StreamWriter(fs);
             foreach (var item in App.PlaylistViewModel.PlaylistItems)
