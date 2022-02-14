@@ -32,7 +32,7 @@
         </StackLayout>
         <StackLayout HeightRequest="20">
             <Label x:Name="lbPlaylistMsg" Text="Current song added to the playlist" 
-                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False"/>
+                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False" TextColor="{StaticResource Accent}"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
             <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
@@ -42,7 +42,7 @@
                 MaximumTrackColor="White"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal">
-            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="{StaticResource Accent}"/>
+            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="{StaticResource Accent}" Padding="5,24"/>
             <xct:RangeSlider
                 HorizontalOptions="FillAndExpand"
                 x:Name="sliderRangeControl"
