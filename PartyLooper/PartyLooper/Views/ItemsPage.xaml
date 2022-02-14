@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.ItemsPage"
              Title="{Binding Title}"
-             xmlns:local="clr-namespace:PartyLooper.ViewModels"  
+             xmlns:local="clr-namespace:PartyLooper.ViewModels"
              xmlns:model="clr-namespace:PartyLooper.Models"  
              x:Name="BrowseItemsPage">
 
