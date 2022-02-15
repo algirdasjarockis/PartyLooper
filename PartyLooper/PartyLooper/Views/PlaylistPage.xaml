@@ -9,6 +9,7 @@
             <CollectionView
                 x:Name="viewPlaylistItems"
                 ItemsSource="{Binding PlaylistItems}"
+                EmptyView="No items"
                 SelectionMode="Single">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>

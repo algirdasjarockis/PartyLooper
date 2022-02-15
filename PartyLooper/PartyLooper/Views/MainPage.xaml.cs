@@ -13,33 +13,38 @@ namespace PartyLooper.Views
     [QueryProperty(nameof(FilenameFromPlaylist), "filePath")]
     public partial class MainPage : ContentPage
     {
-        string selectedFilePath;
+        private bool isSliderDragging = false;
+        private PlayerState playerState = App.MainViewModel.PlayerState;
+        private IMediaManager mediaPlayer = CrossMediaManager.Current;
 
-        bool isSliderDragging = false;
-        bool isPartyMode = false;
-        IMediaManager mediaPlayer = CrossMediaManager.Current;
         public IPlaylistStore<PlaylistItem> playlistStore => DependencyService.Get<IPlaylistStore<PlaylistItem>>();
 
+        // setter used by Routing
         public string FilenameFromPlaylist
         {
-            set
+            set 
             {
-                this.PlayFile(value);
+                playerState.CurrentPlaylistItem = App.PlaylistViewModel.SelectedPlaylistItem;
+                PlayFile(value);
+
+                sliderRangeControl.MaximumValue = playerState.CurrentPlaylistItem.TotalDuration;
+                sliderRangeControl.LowerValue = playerState.CurrentPlaylistItem.LeftPosition;
+                sliderRangeControl.UpperValue = playerState.CurrentPlaylistItem.RightPosition;
             }
         }
 
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = App.MainViewModel;        
+            
+            BindingContext = App.MainViewModel;
 
-            btnOpenMedia.Clicked += this.OpenMediaDialog;
-            btnAddToPlaylist.Clicked += this.AddCurrentSongToPlaylist;
+            btnOpenMedia.Clicked += OpenMediaDialog;
+            btnAddToPlaylist.Clicked += AddCurrentSongToPlaylist;
             btnPlayPause.Clicked += (s, e) => PausePlaying();
             btnParty.Clicked += (s, e) =>
             {
-                isPartyMode = !isPartyMode;
-                btnParty.Text = isPartyMode ? "Party mode is ON" : "Party mode is OFF";
+                btnParty.Text = playerState.IsPartyMode ? "Party mode is ON" : "Party mode is OFF";
             };
 
             btnFixPositionLeft.Clicked += (s, e) => FixateRangeValue(true, sliderSongControl.Value);
@@ -48,6 +53,8 @@ namespace PartyLooper.Views
             sliderSongControl.DragCompleted += (s, e) => SeekMedia(sliderSongControl.Value);
             sliderSongControl.DragStarted += (s, e) => isSliderDragging = true;
             sliderSongControl.DragCompleted += (s, e) => isSliderDragging = false;
+
+            sliderRangeControl.DragCompleted += (s, e) => SaveCurrentRanges();
 
             mediaPlayer.StateChanged += (s, e) =>
             {
@@ -67,18 +74,18 @@ namespace PartyLooper.Views
 
         private async void OpenMediaDialog(object sender, EventArgs e)
         {
-            await this.PickAndShow();
+            await PickAndShow();
         }
 
         private async void AddCurrentSongToPlaylist(object sender, EventArgs e)
         {
-            if (App.PlaylistViewModel.Exists(this.selectedFilePath))
+            if (App.PlaylistViewModel.Exists(playerState.CurrentFile))
             {
                 // file path already exists, nothing to do here
                 return;
             }
 
-            await this.addAndSavePlaylistItems();
+            await addAndSavePlaylistItems();
 
             // update view
             lbPlaylistMsg.IsVisible = true;
@@ -93,12 +100,26 @@ namespace PartyLooper.Views
             });
         }
 
+        private async void SaveCurrentRanges()
+        {
+            PlaylistItem item = playerState.CurrentPlaylistItem;
+            if (item != null)
+            {
+                item.LeftPosition = sliderRangeControl.LowerValue;
+                item.RightPosition = sliderRangeControl.UpperValue;
+                await playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
+            }
+        }
+
         private async Task addAndSavePlaylistItems()
         {
             App.PlaylistViewModel.PlaylistItems.Add(new PlaylistItem()
             {
-                SongName = Path.GetFileNameWithoutExtension(this.selectedFilePath),
-                FilePath = this.selectedFilePath
+                SongName = Path.GetFileNameWithoutExtension(playerState.CurrentFile),
+                FilePath = playerState.CurrentFile,
+                LeftPosition = sliderRangeControl.LowerValue,
+                RightPosition = sliderRangeControl.UpperValue,
+                TotalDuration = mediaPlayer.Duration.TotalSeconds
             });
 
             await this.playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
@@ -124,7 +145,8 @@ namespace PartyLooper.Views
                 var result = await FilePicker.PickAsync(options);
                 if (result != null && result.FileName.EndsWith(".mp3"))
                 {
-                    this.PlayFile(result.FullPath);
+                    playerState.CurrentPlaylistItem = null;
+                    PlayFile(result.FullPath);
                 }
 
                 return result;
@@ -139,21 +161,16 @@ namespace PartyLooper.Views
 
         async void PlayFile(string filePath)
         {
-            this.selectedFilePath = filePath;
+            playerState.CurrentFile = filePath;
 
             btnPlayPause.IsEnabled = btnAddToPlaylist.IsEnabled = true;
-            await mediaPlayer.Play(this.selectedFilePath);
+            await mediaPlayer.Play(filePath);
         }
 
         void RunUiUpdateTimer()
         {
             Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
             {
-                if (isSliderDragging)
-                {
-                    return true;
-                }
-
                 if (!mediaPlayer.IsPlaying())
                 {
                     return false;
@@ -161,7 +178,7 @@ namespace PartyLooper.Views
 
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    if (isPartyMode)
+                    if (playerState.IsPartyMode)
                     {
                         var pos = mediaPlayer.Position.TotalSeconds;
                         if (pos >= sliderRangeControl.UpperValue || pos < sliderRangeControl.LowerValue)
@@ -182,7 +199,10 @@ namespace PartyLooper.Views
                     lbStatus.Text = timeLeft;
                     lbPlayingTime.Text = mediaPlayer.Position.TotalSeconds.ToString();
 
-                    sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
+                    if (!isSliderDragging)
+                    {
+                        sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
+                    }
                 });
 
                 return true;
@@ -218,6 +238,8 @@ namespace PartyLooper.Views
                     sliderRangeControl.LowerValue = position > 0 ? position - 1 : 0;
                 }
             }
+
+            SaveCurrentRanges();
         }
     }
 }

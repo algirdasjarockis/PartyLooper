@@ -23,9 +23,10 @@ namespace PartyLooper.Views
 
         private void OnPlaylistItemSelect(object sender, SelectionChangedEventArgs e)
         {
-            string songPath = (e.CurrentSelection.FirstOrDefault() as PlaylistItem)?.FilePath;
-            System.Console.WriteLine(songPath);
-            Shell.Current.GoToAsync("//" + nameof(MainPage) + $"?filePath={songPath}");
+            PlaylistItem currentItem = (e.CurrentSelection.FirstOrDefault() as PlaylistItem);
+
+            App.PlaylistViewModel.SelectedPlaylistItem = currentItem;
+            Shell.Current.GoToAsync("//" + nameof(MainPage) + $"?filePath={currentItem.FilePath}");
         }
         protected override void OnAppearing()
         {

@@ -11,5 +11,9 @@ namespace PartyLooper.Models
         public bool IsPaused { get; set; }
 
         public bool IsPartyMode { get; set; }
+
+        public string CurrentFile { get; set; }
+
+        public PlaylistItem CurrentPlaylistItem { get; set; }
     }
 }

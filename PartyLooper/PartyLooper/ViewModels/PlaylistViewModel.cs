@@ -10,6 +10,8 @@ namespace PartyLooper.ViewModels
     public class PlaylistViewModel : BaseViewModel
     {
         public ObservableCollection<PlaylistItem> PlaylistItems { get; }
+        public PlaylistItem SelectedPlaylistItem { set; get; }
+
         private IPlaylistStore<PlaylistItem> playlistStore => DependencyService.Get<IPlaylistStore<PlaylistItem>>();
 
         public Command LoadItemsCommand { get; }
