@@ -130,6 +130,7 @@
             </Grid>
         </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
+            <Label HorizontalOptions="Center" x:Name="lbSongName" TextColor="{StaticResource Accent}" FontSize="16" Text="Holy daiva"></Label>
             <Label HorizontalOptions="Center" x:Name="lbStatus" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
             <Label HorizontalOptions="Center" x:Name="lbPlayingTime" TextColor="{StaticResource Accent}" FontSize="18"></Label>
         </StackLayout>

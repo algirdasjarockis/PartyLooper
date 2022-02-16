@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PartyLooper.Models
+﻿namespace PartyLooper.Models
 {
     public class PlayerState
     {
@@ -15,5 +11,12 @@ namespace PartyLooper.Models
         public string CurrentFile { get; set; }
 
         public PlaylistItem CurrentPlaylistItem { get; set; }
+
+        public string CurrentSong
+        {
+            get { 
+                return System.IO.Path.GetFileNameWithoutExtension(CurrentFile); 
+            }
+        }
     }
 }

@@ -70,7 +70,10 @@ namespace PartyLooper.Views
                 {
                     sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
                     sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalMilliseconds;
+                    
                     btnPlayPause.Text = "Pause";
+                    lbSongName.Text = playerState.CurrentSong;
+
                     this.RunUiUpdateTimer();
                 }
                 else
