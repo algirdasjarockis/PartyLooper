@@ -7,6 +7,7 @@
              Title="{Binding Title}">
 
     <ContentPage.Resources>
+        <x:String x:Key="CustomValueLabeStringFormat">{0:N0}</x:String>
         <ResourceDictionary>
             <Style x:Key="ThumbLabelStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource SecondaryAccent}"></Setter>
@@ -48,6 +49,7 @@
                 x:Name="sliderRangeControl"
                 MaximumValue="100"
                 MinimumValue="0"
+                ValueLabelStringFormat="{StaticResource CustomValueLabeStringFormat}"
                 StepValue="1"
                 LowerThumbRadius="5"
                 UpperThumbRadius="5"
@@ -56,9 +58,9 @@
                 LowerValue="0"
                 UpperValue="1000"
                 LowerValueLabelStyle="{StaticResource ThumbLabelStyle}"
-                LowerThumbColor="{StaticResource SecondaryAccent}" LowerThumbBorderColor="{StaticResource SecondaryAccent}"
+                LowerThumbColor="{StaticResource Primary}" LowerThumbBorderColor="{StaticResource SecondaryAccent}"
                 UpperValueLabelStyle="{StaticResource ThumbLabelStyle}"
-                UpperThumbColor="{StaticResource SecondaryAccent}" UpperThumbBorderColor="{StaticResource SecondaryAccent}"
+                UpperThumbColor="{StaticResource RareAccent}" UpperThumbBorderColor="{StaticResource SecondaryAccent}"
                 TrackHighlightColor="{StaticResource SecondaryAccent}" TrackHighlightBorderColor="{StaticResource SecondaryAccent}"
                 TrackColor="#555"
             >
@@ -66,25 +68,66 @@
                     <Label Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                 </xct:RangeSlider.LowerThumbView>
                 <xct:RangeSlider.UpperThumbView>
-                    <Label Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                    <Label FormattedText="" Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                 </xct:RangeSlider.UpperThumbView>
             </xct:RangeSlider>
             <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="{StaticResource Accent}"/>
         </StackLayout>
 
-        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
-            <Button 
-                IsEnabled="False"
-                VerticalOptions="Center"
-                HorizontalOptions="Center"
-                x:Name="btnPlayPause" 
-                Text="Play"
-                TextColor="{StaticResource SecondaryAccent}"
-                FontAttributes="Bold"
-                HeightRequest="80"
-                BorderWidth="4"
-                CornerRadius="30"
-                BorderColor="{StaticResource SecondaryAccent}"/>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+            <Grid Padding="1"
+                RowDefinitions="30,30"
+                ColumnDefinitions="40,*,40">
+                <Button Grid.Row="0"
+                    x:Name="btnRangeLeftMoveLeft" 
+                    Text="⇇"
+                    TextColor="{StaticResource SecondaryAccent}"
+                    FontAttributes="Bold"
+                    Padding="0,-2,0,0"
+                    BorderWidth="2"
+                    CornerRadius="10"
+                    BorderColor="{StaticResource SecondaryAccent}"/>
+                <Button Grid.Row="1"
+                    x:Name="btnRangeLeftMoveRight" 
+                    Text="⇉"
+                    TextColor="{StaticResource SecondaryAccent}"
+                    FontAttributes="Bold"
+                    Padding="0,-2,0,0"
+                    BorderWidth="2"
+                    CornerRadius="10"
+                    BorderColor="{StaticResource SecondaryAccent}"/>
+                <Button Grid.Column="1" Grid.RowSpan="2"
+                    IsEnabled="False"
+                    VerticalOptions="Center"
+                    x:Name="btnPlayPause" 
+                    Text="Play"
+                    TextColor="{StaticResource SecondaryAccent}"
+                    FontAttributes="Bold"
+                    HeightRequest="80"
+                    BorderWidth="4"
+                    CornerRadius="20"
+                    BorderColor="{StaticResource SecondaryAccent}"/>
+                <Button Grid.Row="0" Grid.Column="2"
+                    x:Name="btnRangeRightMoveLeft" 
+                    Text="⇇"
+                    BackgroundColor="{StaticResource RareAccent}"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    Padding="0,-2,0,0"
+                    BorderWidth="2"
+                    CornerRadius="10"
+                    BorderColor="{StaticResource SecondaryAccent}"/>
+                <Button Grid.Row="1" Grid.Column="2"
+                    x:Name="btnRangeRightMoveRight" 
+                    Text="⇉"
+                    BackgroundColor="{StaticResource RareAccent}"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    Padding="0,-2,0,0"
+                    BorderWidth="2"
+                    CornerRadius="10"
+                    BorderColor="{StaticResource SecondaryAccent}"/>
+            </Grid>
         </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
             <Label HorizontalOptions="Center" x:Name="lbStatus" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>

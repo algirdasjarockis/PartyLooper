@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace PartyLooper.Views
     [QueryProperty(nameof(FilenameFromPlaylist), "filePath")]
     public partial class MainPage : ContentPage
     {
+        private Timer timerPlaylistSave;
         private bool isSliderDragging = false;
         private PlayerState playerState = App.MainViewModel.PlayerState;
         private IMediaManager mediaPlayer = CrossMediaManager.Current;
@@ -47,10 +49,16 @@ namespace PartyLooper.Views
                 btnParty.Text = playerState.IsPartyMode ? "Party mode is ON" : "Party mode is OFF";
             };
 
-            btnFixPositionLeft.Clicked += (s, e) => FixateRangeValue(true, sliderSongControl.Value);
-            btnFixPositionRight.Clicked += (s, e) => FixateRangeValue(false, sliderSongControl.Value);
+            // range value manipulation
+            double stepSize = 200;
+            btnFixPositionLeft.Clicked += (s, e) => FixateRangeValue(true, sliderSongControl.Value * 1000);
+            btnFixPositionRight.Clicked += (s, e) => FixateRangeValue(false, sliderSongControl.Value * 1000);
+            btnRangeLeftMoveLeft.Clicked += (s, e) => TuneRangeValue(true, -stepSize);
+            btnRangeLeftMoveRight.Clicked += (s, e) => TuneRangeValue(true, stepSize);
+            btnRangeRightMoveLeft.Clicked += (s, e) => TuneRangeValue(false, -stepSize);
+            btnRangeRightMoveRight.Clicked += (s, e) => TuneRangeValue(false, stepSize);
 
-            sliderSongControl.DragCompleted += (s, e) => SeekMedia(sliderSongControl.Value);
+            sliderSongControl.DragCompleted += (s, e) => SeekMedia(sliderSongControl.Value, true);
             sliderSongControl.DragStarted += (s, e) => isSliderDragging = true;
             sliderSongControl.DragCompleted += (s, e) => isSliderDragging = false;
 
@@ -61,7 +69,7 @@ namespace PartyLooper.Views
                 if (e.State == MediaManager.Player.MediaPlayerState.Playing)
                 {
                     sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
-                    sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalSeconds;
+                    sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalMilliseconds;
                     btnPlayPause.Text = "Pause";
                     this.RunUiUpdateTimer();
                 }
@@ -70,6 +78,16 @@ namespace PartyLooper.Views
                     btnPlayPause.Text = "Play";
                 }
             };
+
+            timerPlaylistSave = new Timer(3000);
+
+            timerPlaylistSave.Elapsed += (s, e) =>
+            {
+                Console.WriteLine("Triggerd a timer to save a playlist");
+                SaveCurrentRanges();
+            };
+            timerPlaylistSave.AutoReset = false;
+            timerPlaylistSave.Enabled = false;
         }
 
         private async void OpenMediaDialog(object sender, EventArgs e)
@@ -107,6 +125,7 @@ namespace PartyLooper.Views
             {
                 item.LeftPosition = sliderRangeControl.LowerValue;
                 item.RightPosition = sliderRangeControl.UpperValue;
+                item.TotalDuration = mediaPlayer.Duration.TotalMilliseconds;
                 await playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
             }
         }
@@ -119,7 +138,7 @@ namespace PartyLooper.Views
                 FilePath = playerState.CurrentFile,
                 LeftPosition = sliderRangeControl.LowerValue,
                 RightPosition = sliderRangeControl.UpperValue,
-                TotalDuration = mediaPlayer.Duration.TotalSeconds
+                TotalDuration = mediaPlayer.Duration.TotalMilliseconds
             });
 
             await this.playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
@@ -180,10 +199,10 @@ namespace PartyLooper.Views
                 {
                     if (playerState.IsPartyMode)
                     {
-                        var pos = mediaPlayer.Position.TotalSeconds;
+                        var pos = mediaPlayer.Position.TotalMilliseconds;
                         if (pos >= sliderRangeControl.UpperValue || pos < sliderRangeControl.LowerValue)
                         {
-                            SeekMedia(sliderRangeControl.LowerValue);
+                            SeekMedia(sliderRangeControl.LowerValue, false);
                         }
                     }
 
@@ -214,9 +233,9 @@ namespace PartyLooper.Views
             await CrossMediaManager.Current.PlayPause();
         }
 
-        async void SeekMedia(double seconds)
+        async void SeekMedia(double seconds, bool useSeconds = true)
         {
-            await mediaPlayer.SeekTo(TimeSpan.FromSeconds(seconds));
+            await mediaPlayer.SeekTo(useSeconds ? TimeSpan.FromSeconds(seconds) : TimeSpan.FromMilliseconds(seconds));
         }
 
         void FixateRangeValue(bool isLeft, double position)
@@ -239,7 +258,33 @@ namespace PartyLooper.Views
                 }
             }
 
-            SaveCurrentRanges();
+            schedulePlaylistSaving();
+        }
+
+        void TuneRangeValue(bool isLeft, double step)
+        {
+            if (isLeft)
+            {
+                sliderRangeControl.LowerValue += step;
+                if (playerState.IsPartyMode)
+                {
+                    SeekMedia(sliderRangeControl.LowerValue, false);
+                }
+            }
+            else
+            {
+                sliderRangeControl.UpperValue += step;
+            }
+
+            schedulePlaylistSaving();
+        }
+
+        void schedulePlaylistSaving()
+        {
+            if (!timerPlaylistSave.Enabled)
+            {
+                timerPlaylistSave.Enabled = true;
+            }
         }
     }
 }

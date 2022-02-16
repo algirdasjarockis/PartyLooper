@@ -11,6 +11,7 @@
             <Color x:Key="Background">#111</Color>
             <Color x:Key="Accent">#6f9e09</Color>
             <Color x:Key="SecondaryAccent">#d1e0b1</Color>
+            <Color x:Key="RareAccent">#cccc16</Color>
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="VisualStateManager.VisualStateGroups">
