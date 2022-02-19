@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.MainPage"
+             xmlns:conv="clr-namespace:PartyLooper.Models.Converters"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              BackgroundColor="{StaticResource Background}"
              Title="{Binding Title}">
@@ -12,9 +13,11 @@
             <Style x:Key="ThumbLabelStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource SecondaryAccent}"></Setter>
             </Style>
+            <conv:EmptyStringToFalseConverter x:Key="emptyStringToFalse" />
+            <conv:NullObjectToFalseConverter x:Key="nullObjectToFalse" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <ContentPage.Background>
         <LinearGradientBrush>
             <GradientStop Color="#333"
@@ -29,11 +32,13 @@
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
             <Button x:Name="btnOpenMedia" Text="Open media"/>
-            <Button x:Name="btnAddToPlaylist" Text="+" WidthRequest="50" IsEnabled="False"/>
+            <Button x:Name="btnAddToPlaylist" Text="+" WidthRequest="50" 
+                    IsEnabled="{Binding AllowedToAddToPlaylist}"/>
         </StackLayout>
         <StackLayout HeightRequest="20">
             <Label x:Name="lbPlaylistMsg" Text="Current song added to the playlist" 
-                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False" TextColor="{StaticResource Accent}"/>
+                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False" 
+                   TextColor="{StaticResource Accent}"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
             <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
@@ -97,7 +102,7 @@
                     CornerRadius="10"
                     BorderColor="{StaticResource SecondaryAccent}"/>
                 <Button Grid.Column="1" Grid.RowSpan="2"
-                    IsEnabled="False"
+                    IsEnabled="{Binding Path=PlayerState.CurrentSong, Converter={StaticResource emptyStringToFalse}}"
                     VerticalOptions="Center"
                     x:Name="btnPlayPause" 
                     Text="Play"
@@ -130,7 +135,8 @@
             </Grid>
         </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
-            <Label HorizontalOptions="Center" x:Name="lbSongName" TextColor="{StaticResource Accent}" FontSize="16" Text="Holy daiva"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbSongName" TextColor="{StaticResource Accent}" FontSize="16" 
+                   Text="{Binding Path=PlayerState.CurrentSong}"/>
             <Label HorizontalOptions="Center" x:Name="lbStatus" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
             <Label HorizontalOptions="Center" x:Name="lbPlayingTime" TextColor="{StaticResource Accent}" FontSize="18"></Label>
         </StackLayout>

@@ -6,11 +6,14 @@ using Xamarin.Forms;
 namespace PartyLooper.ViewModels
 {
     public class MainViewModel : BaseViewModel
-    { 
+    {
+        private bool allowedToAddToPlaylist;
+
         public Command PartyCommand { get; }
 
         public MainViewModel()
         {
+            AllowedToAddToPlaylist = false;
             Title = "Welcome to PartyLooper";
             PlayerState = new Models.PlayerState()
             {
@@ -20,6 +23,15 @@ namespace PartyLooper.ViewModels
             };
 
             PartyCommand = new Command(OnParty);
+        }
+
+        public bool AllowedToAddToPlaylist
+        {
+            get => allowedToAddToPlaylist; 
+            set
+            {
+                SetProperty(ref allowedToAddToPlaylist, value);
+            }
         }
 
         private void OnParty()

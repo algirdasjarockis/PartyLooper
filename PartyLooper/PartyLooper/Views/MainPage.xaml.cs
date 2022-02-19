@@ -72,8 +72,6 @@ namespace PartyLooper.Views
                     sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalMilliseconds;
                     
                     btnPlayPause.Text = "Pause";
-                    lbSongName.Text = playerState.CurrentSong;
-
                     this.RunUiUpdateTimer();
                 }
                 else
@@ -184,8 +182,8 @@ namespace PartyLooper.Views
         async void PlayFile(string filePath)
         {
             playerState.CurrentFile = filePath;
+            App.MainViewModel.AllowedToAddToPlaylist = !App.PlaylistViewModel.Exists(playerState.CurrentFile);
 
-            btnPlayPause.IsEnabled = btnAddToPlaylist.IsEnabled = true;
             await mediaPlayer.Play(filePath);
         }
 
