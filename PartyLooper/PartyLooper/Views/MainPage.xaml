@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.MainPage"
              xmlns:conv="clr-namespace:PartyLooper.Models.Converters"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:viewmodels="clr-namespace:PartyLooper.ViewModels"
              BackgroundColor="{StaticResource Background}"
              Title="{Binding Title}">
 
@@ -31,18 +31,26 @@
     
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-            <Button x:Name="btnOpenMedia" Text="Open media"/>
+            <Button x:Name="btnOpenMedia" Text="Open media" Command="{Binding OpenMediaCommand}"/>
             <Button x:Name="btnAddToPlaylist" Text="+" WidthRequest="50" 
-                    IsEnabled="{Binding AllowedToAddToPlaylist}"/>
+                    IsEnabled="{Binding AllowedToAddToPlaylist}" Command="{Binding AddToPlaylistCommand}"/>
         </StackLayout>
         <StackLayout HeightRequest="20">
-            <Label x:Name="lbPlaylistMsg" Text="Current song added to the playlist" 
-                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False" 
+            <Label x:Name="lbPlaylistMsg"
+                   VerticalOptions="Center" HorizontalOptions="Center"
+                   Text="{Binding PlaylistMessage}"
                    TextColor="{StaticResource Accent}"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
-            <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
+            <Slider 
+                x:Name="sliderSongControl" 
+                x:DataType="viewmodels:PlayerViewModel"
+                Minimum="0" 
+                Maximum="{Binding Duration}"
+                Value="{Binding Position, Mode=TwoWay}"
                 HorizontalOptions="FillAndExpand"
+                DragStartedCommand="{Binding DragStartedCommand}"
+                DragCompletedCommand="{Binding DragCompletedCommand}"
                 ThumbColor="{StaticResource Accent}"
                 MinimumTrackColor="{StaticResource Accent}"
                 MaximumTrackColor="White"/>
@@ -102,10 +110,11 @@
                     CornerRadius="10"
                     BorderColor="{StaticResource SecondaryAccent}"/>
                 <Button Grid.Column="1" Grid.RowSpan="2"
-                    IsEnabled="{Binding Path=PlayerState.CurrentSong, Converter={StaticResource emptyStringToFalse}}"
                     VerticalOptions="Center"
                     x:Name="btnPlayPause" 
-                    Text="Play"
+                    IsEnabled="{Binding Path=PlayerState.CurrentSong, Converter={StaticResource emptyStringToFalse}}"
+                    Text="{Binding ButtonTextPlayPause}"
+                    Command="{Binding PlayCommand}"    
                     TextColor="{StaticResource SecondaryAccent}"
                     FontAttributes="Bold"
                     HeightRequest="80"

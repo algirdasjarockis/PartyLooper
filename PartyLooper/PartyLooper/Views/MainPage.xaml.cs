@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using MediaManager;
 using PartyLooper.Services;
 using PartyLooper.Models;
+using PartyLooper.ViewModels;
 
 namespace PartyLooper.Views
 {
@@ -20,6 +21,8 @@ namespace PartyLooper.Views
         private IMediaManager mediaPlayer = CrossMediaManager.Current;
 
         public IPlaylistStore<PlaylistItem> playlistStore => DependencyService.Get<IPlaylistStore<PlaylistItem>>();
+
+        public PlayerViewModel PlayerViewModel = App.PlayerViewModel;
 
         // setter used by Routing
         public string FilenameFromPlaylist
@@ -39,28 +42,30 @@ namespace PartyLooper.Views
         {
             InitializeComponent();
             
-            BindingContext = App.MainViewModel;
+            BindingContext = App.PlayerViewModel;
+            sliderSongControl.BindingContext = App.PlayerViewModel;
+            btnPlayPause.BindingContext = App.PlayerViewModel;
 
-            btnOpenMedia.Clicked += OpenMediaDialog;
-            btnAddToPlaylist.Clicked += AddCurrentSongToPlaylist;
-            btnPlayPause.Clicked += (s, e) => PausePlaying();
-            btnParty.Clicked += (s, e) =>
-            {
-                btnParty.Text = playerState.IsPartyMode ? "Party mode is ON" : "Party mode is OFF";
-            };
+            //btnOpenMedia.Clicked += OpenMediaDialog;
+            //btnAddToPlaylist.Clicked += AddCurrentSongToPlaylist;
+            //btnPlayPause.Clicked += (s, e) => PausePlaying();
+            //btnParty.Clicked += (s, e) =>
+            //{
+                //btnParty.Text = playerState.IsPartyMode ? "Party mode is ON" : "Party mode is OFF";
+            //};
 
             // range value manipulation
             double stepSize = 200;
-            btnFixPositionLeft.Clicked += (s, e) => FixateRangeValue(true, sliderSongControl.Value * 1000);
-            btnFixPositionRight.Clicked += (s, e) => FixateRangeValue(false, sliderSongControl.Value * 1000);
+            //btnFixPositionLeft.Clicked += (s, e) => FixateRangeValue(true, sliderSongControl.Value * 1000);
+            //btnFixPositionRight.Clicked += (s, e) => FixateRangeValue(false, sliderSongControl.Value * 1000);
             btnRangeLeftMoveLeft.Clicked += (s, e) => TuneRangeValue(true, -stepSize);
             btnRangeLeftMoveRight.Clicked += (s, e) => TuneRangeValue(true, stepSize);
             btnRangeRightMoveLeft.Clicked += (s, e) => TuneRangeValue(false, -stepSize);
             btnRangeRightMoveRight.Clicked += (s, e) => TuneRangeValue(false, stepSize);
 
-            sliderSongControl.DragCompleted += (s, e) => SeekMedia(sliderSongControl.Value, true);
-            sliderSongControl.DragStarted += (s, e) => isSliderDragging = true;
-            sliderSongControl.DragCompleted += (s, e) => isSliderDragging = false;
+            //sliderSongControl.DragCompleted += (s, e) => SeekMedia(sliderSongControl.Value, true);
+            //sliderSongControl.DragStarted += (s, e) => isSliderDragging = true;
+            //sliderSongControl.DragCompleted += (s, e) => isSliderDragging = false;
 
             sliderRangeControl.DragCompleted += (s, e) => SaveCurrentRanges();
 
@@ -68,15 +73,15 @@ namespace PartyLooper.Views
             {
                 if (e.State == MediaManager.Player.MediaPlayerState.Playing)
                 {
-                    sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
-                    sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalMilliseconds;
+                    //sliderSongControl.Maximum = mediaPlayer.Duration.TotalSeconds;
+                    //sliderRangeControl.MaximumValue = mediaPlayer.Duration.TotalMilliseconds;
                     
-                    btnPlayPause.Text = "Pause";
-                    this.RunUiUpdateTimer();
+                    //btnPlayPause.Text = "Pause";
+                    //this.RunUiUpdateTimer();
                 }
                 else
                 {
-                    btnPlayPause.Text = "Play";
+                    //btnPlayPause.Text = "Play";
                 }
             };
 
@@ -221,7 +226,7 @@ namespace PartyLooper.Views
 
                     if (!isSliderDragging)
                     {
-                        sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
+                        //sliderSongControl.Value = mediaPlayer.Position.TotalSeconds;
                     }
                 });
 
@@ -231,7 +236,7 @@ namespace PartyLooper.Views
 
         async void PausePlaying()
         {
-            await CrossMediaManager.Current.PlayPause();
+            //await CrossMediaManager.Current.PlayPause();
         }
 
         async void SeekMedia(double seconds, bool useSeconds = true)
