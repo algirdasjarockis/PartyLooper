@@ -7,8 +7,10 @@
     <ContentPage.Content>
         <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
             <CollectionView
-                x:Name="viewPlaylistItems"
+                x:Name="PlaylistCollectionView"
                 ItemsSource="{Binding PlaylistItems}"
+                SelectionChangedCommand="{Binding SelectionChangedCommand}"
+                SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference PlaylistCollectionView}}"
                 EmptyView="No items"
                 SelectionMode="Single">
                 <CollectionView.ItemTemplate>
