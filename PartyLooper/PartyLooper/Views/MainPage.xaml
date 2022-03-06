@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PartyLooper.Views.MainPage"
              xmlns:conv="clr-namespace:PartyLooper.Models.Converters"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:viewmodels="clr-namespace:PartyLooper.ViewModels"
              BackgroundColor="{StaticResource Background}"
              Title="{Binding Title}">
 
@@ -31,28 +31,40 @@
     
     <StackLayout Padding="10,20,10,0" VerticalOptions="FillAndExpand" Orientation="Vertical">
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-            <Button x:Name="btnOpenMedia" Text="Open media"/>
-            <Button x:Name="btnAddToPlaylist" Text="+" WidthRequest="50" 
+            <Button Text="Open media" Command="{Binding OpenMediaCommand}"/>
+            <Button Text="+" WidthRequest="50"
+                    Command="{Binding AddToPlaylistCommand}"
                     IsEnabled="{Binding AllowedToAddToPlaylist}"/>
         </StackLayout>
         <StackLayout HeightRequest="20">
-            <Label x:Name="lbPlaylistMsg" Text="Current song added to the playlist" 
-                   VerticalOptions="Center" HorizontalOptions="Center" IsVisible="False" 
+            <Label x:Name="lbPlaylistMsg"
+                   VerticalOptions="Center" HorizontalOptions="Center"
+                   Text="{Binding PlaylistMessage}"
                    TextColor="{StaticResource Accent}"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20,4,20,4">
-            <Slider x:Name="sliderSongControl" Minimum="0" Maximum="100"
+            <Slider 
+                x:DataType="viewmodels:PlayerViewModel"
+                Minimum="0" 
+                Maximum="{Binding Duration}"
+                Value="{Binding Position, Mode=TwoWay}"
                 HorizontalOptions="FillAndExpand"
+                DragStartedCommand="{Binding DragStartedCommand}"
+                DragCompletedCommand="{Binding DragCompletedCommand}"
                 ThumbColor="{StaticResource Accent}"
                 MinimumTrackColor="{StaticResource Accent}"
                 MaximumTrackColor="White"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal">
-            <Button x:Name="btnFixPositionLeft" Text="L" WidthRequest="30" BackgroundColor="{StaticResource Accent}" Padding="5,24"/>
+            <Button Text="L" 
+                    WidthRequest="30" BackgroundColor="{StaticResource Accent}" Padding="5,24"
+                    Command="{Binding FixateRangeCommand}"
+                    CommandParameter="L"
+                    />
             <xct:RangeSlider
                 HorizontalOptions="FillAndExpand"
                 x:Name="sliderRangeControl"
-                MaximumValue="100"
+                MaximumValue="{Binding SegmentMaxValue}"
                 MinimumValue="0"
                 ValueLabelStringFormat="{StaticResource CustomValueLabeStringFormat}"
                 StepValue="1"
@@ -60,8 +72,8 @@
                 UpperThumbRadius="5"
                 LowerThumbSize="20"
                 UpperThumbSize="20"
-                LowerValue="0"
-                UpperValue="1000"
+                LowerValue="{Binding SegmentLowerValue}"
+                UpperValue="{Binding SegmentUpperValue}"
                 LowerValueLabelStyle="{StaticResource ThumbLabelStyle}"
                 LowerThumbColor="{StaticResource Primary}" LowerThumbBorderColor="{StaticResource SecondaryAccent}"
                 UpperValueLabelStyle="{StaticResource ThumbLabelStyle}"
@@ -75,8 +87,17 @@
                 <xct:RangeSlider.UpperThumbView>
                     <Label FormattedText="" Text="" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                 </xct:RangeSlider.UpperThumbView>
+                <xct:RangeSlider.Behaviors>
+                    <xct:EventToCommandBehavior
+                        EventName="DragCompleted"
+                        Command="{Binding SegmentSelectDragCompletedCommand}"/>
+                </xct:RangeSlider.Behaviors>
             </xct:RangeSlider>
-            <Button x:Name="btnFixPositionRight" Text="R" WidthRequest="30" BackgroundColor="{StaticResource Accent}"/>
+            <Button Text="R" 
+                    WidthRequest="30" BackgroundColor="{StaticResource Accent}"
+                    Command="{Binding FixateRangeCommand}"
+                    CommandParameter="R"
+                    />
         </StackLayout>
 
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
@@ -84,36 +105,40 @@
                 RowDefinitions="30,30"
                 ColumnDefinitions="40,*,40">
                 <Button Grid.Row="0"
-                    x:Name="btnRangeLeftMoveLeft" 
                     Text="⇇"
                     TextColor="{StaticResource SecondaryAccent}"
                     FontAttributes="Bold"
                     Padding="0,-2,0,0"
                     BorderWidth="2"
                     CornerRadius="10"
-                    BorderColor="{StaticResource SecondaryAccent}"/>
+                    BorderColor="{StaticResource SecondaryAccent}"
+                    Command="{Binding TuneRangeCommand}"
+                    CommandParameter="LL"    
+                    />
                 <Button Grid.Row="1"
-                    x:Name="btnRangeLeftMoveRight" 
                     Text="⇉"
                     TextColor="{StaticResource SecondaryAccent}"
                     FontAttributes="Bold"
                     Padding="0,-2,0,0"
                     BorderWidth="2"
                     CornerRadius="10"
-                    BorderColor="{StaticResource SecondaryAccent}"/>
+                    BorderColor="{StaticResource SecondaryAccent}"
+                    Command="{Binding TuneRangeCommand}"
+                    CommandParameter="LR"      
+                    />
                 <Button Grid.Column="1" Grid.RowSpan="2"
-                    IsEnabled="{Binding Path=PlayerState.CurrentSong, Converter={StaticResource emptyStringToFalse}}"
                     VerticalOptions="Center"
-                    x:Name="btnPlayPause" 
-                    Text="Play"
+                    Text="{Binding ButtonTextPlayPause}"
+                    Command="{Binding PlayCommand}"    
                     TextColor="{StaticResource SecondaryAccent}"
                     FontAttributes="Bold"
                     HeightRequest="80"
                     BorderWidth="4"
                     CornerRadius="20"
-                    BorderColor="{StaticResource SecondaryAccent}"/>
+                    BorderColor="{StaticResource SecondaryAccent}"
+                    IsEnabled="{Binding Path=PlayerState.CurrentSong, Converter={StaticResource emptyStringToFalse}}"
+                    />
                 <Button Grid.Row="0" Grid.Column="2"
-                    x:Name="btnRangeRightMoveLeft" 
                     Text="⇇"
                     BackgroundColor="{StaticResource RareAccent}"
                     TextColor="Black"
@@ -121,9 +146,11 @@
                     Padding="0,-2,0,0"
                     BorderWidth="2"
                     CornerRadius="10"
-                    BorderColor="{StaticResource SecondaryAccent}"/>
+                    BorderColor="{StaticResource SecondaryAccent}"
+                    Command="{Binding TuneRangeCommand}"
+                    CommandParameter="RL"      
+                    />
                 <Button Grid.Row="1" Grid.Column="2"
-                    x:Name="btnRangeRightMoveRight" 
                     Text="⇉"
                     BackgroundColor="{StaticResource RareAccent}"
                     TextColor="Black"
@@ -131,17 +158,20 @@
                     Padding="0,-2,0,0"
                     BorderWidth="2"
                     CornerRadius="10"
-                    BorderColor="{StaticResource SecondaryAccent}"/>
+                    BorderColor="{StaticResource SecondaryAccent}"
+                    Command="{Binding TuneRangeCommand}"
+                    CommandParameter="RR"  
+                    />
             </Grid>
         </StackLayout>
         <StackLayout VerticalOptions="EndAndExpand">
             <Label HorizontalOptions="Center" x:Name="lbSongName" TextColor="{StaticResource Accent}" FontSize="16" 
                    Text="{Binding Path=PlayerState.CurrentSong}"/>
-            <Label HorizontalOptions="Center" x:Name="lbStatus" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
-            <Label HorizontalOptions="Center" x:Name="lbPlayingTime" TextColor="{StaticResource Accent}" FontSize="18"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbStatus" Text="{Binding TimeLeft}" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
+            <Label HorizontalOptions="Center" x:Name="lbPlayingTime" Text="{Binding PlayingTime}" TextColor="{StaticResource Accent}" FontSize="18"></Label>
         </StackLayout>
         <StackLayout Padding="10">
-            <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="Party!" BackgroundColor="{StaticResource Accent}"/>
+            <Button x:Name="btnParty" Command="{Binding PartyCommand}" Text="{Binding ButtonTextParty}" BackgroundColor="{StaticResource Accent}"/>
         </StackLayout>
     </StackLayout>
 </ContentPage>

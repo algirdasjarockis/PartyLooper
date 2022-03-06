@@ -9,6 +9,7 @@ namespace PartyLooper.Models
     {
         private string currentFile;
         private PlaylistItem playlistItem;
+        private double currentPosition;
 
         public bool IsPlaying { get; set; }
 
@@ -30,16 +31,24 @@ namespace PartyLooper.Models
             }
         }
 
-        public PlaylistItem CurrentPlaylistItem {
-            get
-            {
-                return playlistItem;
-            }
+        public PlaylistItem CurrentPlaylistItem 
+        {
+            get => playlistItem;
             set
             {
                 playlistItem = value;
                 NotifyPropertyChanged();
             } 
+        }
+
+        public double CurrentPosition
+        {
+            get => currentPosition;
+            set
+            {
+                currentPosition = value;
+                NotifyPropertyChanged();
+            }
         }
 
         public string CurrentSong { get; set; }
