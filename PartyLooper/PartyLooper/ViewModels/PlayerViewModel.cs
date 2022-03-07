@@ -109,6 +109,7 @@ namespace PartyLooper.ViewModels
         }
 
         public double Duration { get; private set; }
+        public PlayerState PlayerState { get; set; }
 
         public Command PlayCommand { get; }
         public Command DragCompletedCommand { get; }
@@ -136,9 +137,7 @@ namespace PartyLooper.ViewModels
             AllowedToAddToPlaylist = false;
             PlayerState = new PlayerState()
             {
-                IsPartyMode = false,
-                IsPaused = true,
-                IsPlaying = false
+                IsPartyMode = false
             };
 
             // UI element commands
@@ -210,7 +209,7 @@ namespace PartyLooper.ViewModels
                 new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
                 {
                     { DevicePlatform.iOS, new[] { "audio/mpeg" } },
-                    { DevicePlatform.Android, new[] { "audio/mpeg", "image/jpeg" } },
+                    { DevicePlatform.Android, new[] { "audio/mpeg" } },
                 });
 
             var options = new PickOptions

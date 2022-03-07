@@ -10,16 +10,6 @@ namespace PartyLooper.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
-
-        PlayerState playerState;
-
-        public PlayerState PlayerState
-        {
-            get => playerState;
-            set {  SetProperty(ref playerState, value); }
-        }
-
         bool isBusy = false;
         public bool IsBusy
         {

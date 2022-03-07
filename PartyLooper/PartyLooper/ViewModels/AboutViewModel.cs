@@ -9,8 +9,8 @@ namespace PartyLooper.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
-            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamarin-quickstart"));
+            Title = "About PartyLooper";
+            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://github.com/algirdasjarockis/PartyLooper"));
         }
 
         public ICommand OpenWebCommand { get; }

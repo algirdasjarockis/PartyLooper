@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PartyLooper.Models
+﻿namespace PartyLooper.Models
 {
     public class PlaylistItem
     {
@@ -10,7 +6,6 @@ namespace PartyLooper.Models
         public string FilePath { get; set; }
         public double LeftPosition { get; set; }
         public double RightPosition { get; set; }
-
         public double TotalDuration { get; set; }
 
         public PlaylistItem()

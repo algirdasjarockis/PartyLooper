@@ -11,17 +11,14 @@ namespace PartyLooper
 {
     public partial class App : Application
     {
-        public static MainViewModel MainViewModel { get; private set; }
         public static PlaylistViewModel PlaylistViewModel { get; private set; }
         public static PlayerViewModel PlayerViewModel { get; private set; }
         public App()
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
             DependencyService.Register<PlaylistStore>();
 
-            MainViewModel = new MainViewModel();
             PlaylistViewModel = new PlaylistViewModel();
             PlayerViewModel = new PlayerViewModel(CrossMediaManager.Current, DependencyService.Get<IPlaylistStore<PlaylistItem>>());
 
