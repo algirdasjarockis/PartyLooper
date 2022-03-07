@@ -24,8 +24,8 @@ namespace PartyLooper.ViewModels
         private string playlistMsg;
         private string timeLeft = "";
         private string playingTime = "";
-        private double segmentLowerValue = 0;
-        private double segmentUpperValue = 100;
+        private double segmentLowerValue = 33;
+        private double segmentUpperValue = 66;
         private double segmentMaxValue = 100;
         private readonly IMediaManager mediaManager;
         private readonly IPlaylistStore<PlaylistItem> playlistStore;
@@ -119,6 +119,7 @@ namespace PartyLooper.ViewModels
         public Command AddToPlaylistCommand { get; }
         public Command<string> FixateRangeCommand { get; }
         public Command<string> TuneRangeCommand { get; }
+        public Command RestartCommand { get; }
 
         public PlayerViewModel(IMediaManager mediaManager, IPlaylistStore<PlaylistItem> playlistStore)
         {
@@ -150,6 +151,7 @@ namespace PartyLooper.ViewModels
             AddToPlaylistCommand = new Command(AddCurrentSongToPlaylist);
             FixateRangeCommand = new Command<string>(FixateRangeValue);
             TuneRangeCommand = new Command<string>(TuneRangeValue);
+            RestartCommand = new Command(RestartCurrentSong);
 
             // media player events
             this.mediaManager.PositionChanged += PlayerPositionChanged;
@@ -199,7 +201,7 @@ namespace PartyLooper.ViewModels
         private void OnParty()
         {
             PlayerState.IsPartyMode = !PlayerState.IsPartyMode;
-            ButtonTextParty = "Party Mode: " + (PlayerState.IsPartyMode ? "ON" : "OFF");
+            ButtonTextParty = "Party Mode is " + (PlayerState.IsPartyMode ? "ON" : "OFF");
         }
 
         private async Task<FileResult> PickAndShow()
@@ -268,7 +270,7 @@ namespace PartyLooper.ViewModels
             {
                 await App.PlaylistViewModel.ExecuteLoadItemsCommand();
             }
-            await addAndSavePlaylistItems();
+            PlayerState.CurrentPlaylistItem = await addAndSavePlaylistItems();
 
             // update view
             PlaylistMessage = "Current song added to the playlist";
@@ -279,19 +281,23 @@ namespace PartyLooper.ViewModels
             });
         }
 
-        private async Task addAndSavePlaylistItems()
+        private async Task<PlaylistItem> addAndSavePlaylistItems()
         {
-            App.PlaylistViewModel.PlaylistItems.Add(new PlaylistItem()
+            var playlistItem = new PlaylistItem()
             {
                 SongName = Path.GetFileNameWithoutExtension(PlayerState.CurrentFile),
                 FilePath = PlayerState.CurrentFile,
                 LeftPosition = SegmentLowerValue,
                 RightPosition = SegmentUpperValue,
                 TotalDuration = SegmentMaxValue
-            });
+            };
+
+            App.PlaylistViewModel.PlaylistItems.Add(playlistItem);
 
             await playlistStore.PersistPlaylistAsync(App.PlaylistViewModel.PlaylistItems);
             AllowedToAddToPlaylist = false;
+
+            return playlistItem;
         }
 
         void RunUiUpdateTimer()
@@ -392,6 +398,11 @@ namespace PartyLooper.ViewModels
             }
 
             SchedulePlaylistSaving();
+        }
+
+        void RestartCurrentSong()
+        {
+            mediaManager.SeekTo(TimeSpan.FromSeconds(0));
         }
 
         void SchedulePlaylistSaving()
