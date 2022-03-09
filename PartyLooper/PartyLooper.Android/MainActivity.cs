@@ -11,7 +11,7 @@ namespace PartyLooper.Droid
 {
     [Activity(
         Label = "PartyLooper", 
-        Icon = "@mipmap/icon", 
+        Icon = "@mipmap/ic_launcher", 
         Theme = "@style/MainTheme", 
         LaunchMode = LaunchMode.SingleTask,
         MainLauncher = true, 
