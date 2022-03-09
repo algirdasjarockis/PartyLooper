@@ -177,7 +177,7 @@
             <Label HorizontalOptions="Center" Text="{Binding TimeLeft}" TextColor="{StaticResource Accent}" FontAttributes="Bold" FontSize="26"></Label>
             <Label HorizontalOptions="Center" Text="{Binding PlayingTime}" TextColor="{StaticResource Accent}" FontSize="18"></Label>
         </StackLayout>
-        <StackLayout Padding="10">
+        <StackLayout Padding="10,20">
             <Button Command="{Binding PartyCommand}" Text="{Binding ButtonTextParty}" BackgroundColor="{StaticResource Accent}"/>
         </StackLayout>
     </StackLayout>
