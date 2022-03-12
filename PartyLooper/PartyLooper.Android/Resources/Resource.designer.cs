@@ -22923,9 +22923,6 @@ namespace PartyLooper.Droid
 			// aapt resource value: 0x7F0700BC
 			public const int tooltip_frame_light = 2131165372;
 			
-			// aapt resource value: 0x7F0700BD
-			public const int xamarin_logo = 2131165373;
-			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -25175,17 +25172,8 @@ namespace PartyLooper.Droid
 		public partial class Mipmap
 		{
 			
-			// aapt resource value: 0x7F0C0001
-			public const int icon = 2131492865;
-			
-			// aapt resource value: 0x7F0C0002
-			public const int icon_round = 2131492866;
-			
 			// aapt resource value: 0x7F0C0000
 			public const int ic_launcher = 2131492864;
-			
-			// aapt resource value: 0x7F0C0003
-			public const int launcher_foreground = 2131492867;
 			
 			static Mipmap()
 			{
